@@ -1,0 +1,6 @@
+size,avg_greedy_cost,avg_local_search_cost,avg_greedy_runtime_seconds,avg_local_search_total_runtime_seconds,avg_cost_improvement_pct,avg_swap_iterations
+20,379.2075,363.7435,0.000851,0.001306,3.68,1.80
+40,535.6280,500.7689,0.008034,0.014454,6.53,3.40
+60,608.5117,594.7784,0.034267,0.058260,2.24,3.60
+80,701.3791,671.4531,0.091030,0.180458,4.28,6.00
+100,794.9077,761.7242,0.295155,0.620295,4.10,8.00

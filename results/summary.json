@@ -1,0 +1,76 @@
+{
+  "global_summary": {
+    "num_trials": 25,
+    "avg_greedy_cost": 603.9267919533268,
+    "avg_local_search_cost": 578.4936109075397,
+    "avg_greedy_runtime_seconds": 0.08586737339384853,
+    "avg_local_search_runtime_seconds": 0.08908708156086505,
+    "avg_local_search_total_runtime_seconds": 0.1749544549547136,
+    "avg_cost_improvement_pct": 4.1691837382609185,
+    "avg_swap_iterations": 4.56,
+    "avg_improving_swaps": 3.56,
+    "avg_evaluated_swaps": 4400.64
+  },
+  "by_size": [
+    {
+      "size": 20,
+      "avg_greedy_cost": 379.20752539796115,
+      "avg_local_search_cost": 363.74348254502365,
+      "avg_greedy_runtime_seconds": 0.0008513083914294839,
+      "avg_local_search_runtime_seconds": 0.00045434162020683286,
+      "avg_local_search_total_runtime_seconds": 0.0013056500116363167,
+      "avg_cost_improvement_pct": 3.6845477971781055,
+      "avg_swap_iterations": 1.8,
+      "avg_improving_swaps": 0.8,
+      "avg_evaluated_swaps": 115.2
+    },
+    {
+      "size": 40,
+      "avg_greedy_cost": 535.6279505607531,
+      "avg_local_search_cost": 500.76891777260823,
+      "avg_greedy_runtime_seconds": 0.008033766597509383,
+      "avg_local_search_runtime_seconds": 0.006420016614720225,
+      "avg_local_search_total_runtime_seconds": 0.01445378321222961,
+      "avg_cost_improvement_pct": 6.532250808531782,
+      "avg_swap_iterations": 3.4,
+      "avg_improving_swaps": 2.4,
+      "avg_evaluated_swaps": 870.4
+    },
+    {
+      "size": 60,
+      "avg_greedy_cost": 608.5117189228876,
+      "avg_local_search_cost": 594.7783793172471,
+      "avg_greedy_runtime_seconds": 0.03426707498729229,
+      "avg_local_search_runtime_seconds": 0.023992508184164762,
+      "avg_local_search_total_runtime_seconds": 0.058259583171457054,
+      "avg_cost_improvement_pct": 2.2428061660714884,
+      "avg_swap_iterations": 3.6,
+      "avg_improving_swaps": 2.6,
+      "avg_evaluated_swaps": 2073.6
+    },
+    {
+      "size": 80,
+      "avg_greedy_cost": 701.379071902863,
+      "avg_local_search_cost": 671.4530817471656,
+      "avg_greedy_runtime_seconds": 0.09102970040403306,
+      "avg_local_search_runtime_seconds": 0.0894287413917482,
+      "avg_local_search_total_runtime_seconds": 0.18045844179578124,
+      "avg_cost_improvement_pct": 4.284367863996766,
+      "avg_swap_iterations": 6,
+      "avg_improving_swaps": 5,
+      "avg_evaluated_swaps": 6144
+    },
+    {
+      "size": 100,
+      "avg_greedy_cost": 794.907692982169,
+      "avg_local_search_cost": 761.7241931556542,
+      "avg_greedy_runtime_seconds": 0.29515501658897847,
+      "avg_local_search_runtime_seconds": 0.3251397999934852,
+      "avg_local_search_total_runtime_seconds": 0.6202948165824637,
+      "avg_cost_improvement_pct": 4.101946055526452,
+      "avg_swap_iterations": 8,
+      "avg_improving_swaps": 7,
+      "avg_evaluated_swaps": 12800
+    }
+  ]
+}
