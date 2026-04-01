@@ -46,6 +46,7 @@ def total_cost(open_facilities: list[int], distances: list[list[float]]) -> tupl
     assignment: list[int] = []
     total = 0.0
     for client_index in range(len(distances[0])):
+        # Each client is assigned to its nearest currently open facility.
         best_facility = min(open_facilities, key=lambda facility: distances[facility][client_index])
         assignment.append(best_facility)
         total += distances[best_facility][client_index]
@@ -61,6 +62,8 @@ def _compute_closest_data(
     total = 0.0
 
     for client_index in range(len(distances[0])):
+        # Local search needs both the closest and second-closest open facility so
+        # it can estimate the effect of removing one facility during a swap.
         ranked = sorted(
             ((distances[facility][client_index], facility) for facility in open_facilities),
             key=lambda item: item[0],
@@ -92,6 +95,7 @@ def greedy_kmedian(distances: list[list[float]], k: int) -> SolutionMetrics:
         for candidate in facility_indices:
             if candidate in open_set:
                 continue
+            # Evaluate the objective after opening one additional facility.
             candidate_set = open_facilities + [candidate]
             candidate_cost, candidate_assignment = total_cost(candidate_set, distances)
             if candidate_cost < best_cost:
@@ -152,11 +156,14 @@ def local_search_kmedian(
                 candidate_cost = 0.0
                 for client_index, assigned_facility in enumerate(assignment):
                     incoming_distance = distances[closed_facility][client_index]
+                    # If the outgoing facility currently serves this client, the client
+                    # may need to fall back to its second-best open facility.
                     if assigned_facility == open_facility:
                         candidate_cost += min(second_closest_distances[client_index], incoming_distance)
                     else:
                         candidate_cost += min(closest_distances[client_index], incoming_distance)
 
+                    # Stop early once this swap is already worse than the best swap seen.
                     if candidate_cost >= best_cost - tolerance:
                         break
 
@@ -174,6 +181,7 @@ def local_search_kmedian(
         open_facilities.sort()
         open_set.remove(outgoing)
         open_set.add(incoming)
+        # Refresh exact assignments after committing the best improving swap.
         current_cost, assignment, closest_distances, second_closest_distances = _compute_closest_data(
             open_facilities, distances
         )

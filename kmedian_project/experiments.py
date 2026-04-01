@@ -28,6 +28,8 @@ def generate_euclidean_instance(
     coordinate_limit: float = 100.0,
 ) -> KMedianInstance:
     rng = random.Random(seed)
+    # Sampling both facilities and clients from the plane gives us a valid metric
+    # instance under Euclidean distance while keeping experiments reproducible.
     facilities = [
         Point(rng.uniform(0.0, coordinate_limit), rng.uniform(0.0, coordinate_limit))
         for _ in range(num_facilities)
@@ -62,6 +64,8 @@ def run_experiments(base_dir: Path, sizes: list[int], seeds: list[int], k_ratio:
             instance = generate_euclidean_instance(num_facilities, num_clients, seed)
             distances = instance.distance_matrix()
             greedy_result = greedy_kmedian(distances, k)
+            # Local search starts from the greedy solution so the comparison is fair
+            # and the improvement phase has a meaningful initialization.
             local_result = local_search_kmedian(distances, k, initial_open=greedy_result.open_facilities)
 
             rows.append(
@@ -107,6 +111,7 @@ def summarize(rows: list[dict[str, float]]) -> dict[str, object]:
 
     by_size: list[dict[str, float]] = []
     for size, size_rows in sorted(grouped.items()):
+        # Aggregate repeated random trials so the report can discuss trends by size.
         by_size.append(
             {
                 "size": size,
@@ -154,6 +159,7 @@ def create_plots(summary: dict[str, object], figures_dir: Path) -> None:
 
     plt.style.use("seaborn-v0_8-whitegrid")
 
+    # Compare objective values to show whether local search improves over greedy.
     plt.figure(figsize=(8, 5))
     plt.plot(sizes, [item["avg_greedy_cost"] for item in by_size], marker="o", label="Greedy baseline")
     plt.plot(
@@ -170,6 +176,7 @@ def create_plots(summary: dict[str, object], figures_dir: Path) -> None:
     plt.savefig(figures_dir / "cost_comparison.png", dpi=200)
     plt.close()
 
+    # Runtime includes greedy initialization plus the subsequent local-search phase.
     plt.figure(figsize=(8, 5))
     plt.plot(
         sizes,
@@ -191,6 +198,7 @@ def create_plots(summary: dict[str, object], figures_dir: Path) -> None:
     plt.savefig(figures_dir / "runtime_comparison.png", dpi=200)
     plt.close()
 
+    # Convergence is measured in passes through the swap neighborhood.
     plt.figure(figsize=(8, 5))
     plt.bar(sizes, [item["avg_swap_iterations"] for item in by_size], width=8)
     plt.xlabel("Number of facilities / clients")
@@ -200,6 +208,7 @@ def create_plots(summary: dict[str, object], figures_dir: Path) -> None:
     plt.savefig(figures_dir / "swap_iterations.png", dpi=200)
     plt.close()
 
+    # This plot makes the benefit over the baseline visible at a glance.
     plt.figure(figsize=(8, 5))
     plt.bar(sizes, [item["avg_cost_improvement_pct"] for item in by_size], width=8)
     plt.xlabel("Number of facilities / clients")

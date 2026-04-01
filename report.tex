@@ -39,7 +39,7 @@ Roll No: 22CS10070
 \newpage
 
 \begin{abstract}
-This report studies a local-search approximation algorithm for the metric $k$-median problem and compares it against a naive greedy baseline. The implementation models facilities and clients as points in a Euclidean metric space, uses a greedy constructive heuristic to produce an initial solution, and then improves that solution by repeatedly performing the best available one-swap move. The empirical evaluation focuses on three required aspects: running time, the number of swap iterations required for convergence, and the achieved solution cost relative to the greedy baseline. Across 25 benchmark instances, local search never performed worse than greedy, improved the solution in 22 cases, and tied in 3 cases. On average, local search reduced the cost by about 4.17\% while requiring additional computation due to swap exploration. These observations support the conclusion that local search is a strong and practical approximation-oriented heuristic for moderate instance sizes.
+This report studies a local-search heuristic for the metric $k$-median problem and compares it against a naive greedy baseline. The implementation models facilities and clients as points in a Euclidean metric space, uses a greedy constructive heuristic to produce an initial solution, and then improves that solution by repeatedly performing the best available one-swap move. The empirical evaluation focuses on three required aspects: running time, the number of swap iterations required for convergence, and the achieved solution cost relative to the greedy baseline. Across 25 benchmark instances, local search never performed worse than greedy, improved the solution in 22 cases, and tied in 3 cases. On average, local search reduced the cost by about 4.17\% while requiring additional computation due to swap exploration. These observations support the conclusion that local search is a strong and practical approximation-oriented heuristic for moderate instance sizes.
 \end{abstract}
 
 \newpage
@@ -49,7 +49,7 @@ Facility-location problems are central in operations research, approximation alg
 
 The exact optimization problem is computationally difficult, which motivates approximation algorithms and local-improvement heuristics. For this project, the chosen approach is local search rather than a primal-dual method. This is a good fit for an implementation-oriented study because the algorithm is conceptually simple, relatively easy to explain, and naturally produces convergence statistics such as the number of improving swaps required before a local optimum is reached.
 
-This report has two main goals. First, it documents a clean Python implementation of both a naive greedy baseline and a local-search algorithm based on one-for-one facility swaps. Second, it evaluates the algorithms empirically using randomly generated metric instances and compares them using the metrics requested in the assignment: runtime, convergence behavior, and solution quality.
+This report has two main goals. First, it documents a clean Python implementation of both a naive greedy baseline and a local-search heuristic based on one-for-one facility swaps. Second, it evaluates the methods empirically using randomly generated metric instances and compares them using the metrics requested in the assignment: runtime, convergence behavior, and solution quality.
 
 \section{Problem Definition}
 Let $F$ be a set of candidate facility locations and let $C$ be a set of clients. For every pair of points $x, y \in F \cup C$, let $d(x,y)$ be a metric distance satisfying non-negativity, symmetry, and the triangle inequality. The metric $k$-median problem asks us to choose a subset $S \subseteq F$ such that $|S| \leq k$ and the total client-assignment cost
@@ -61,7 +61,7 @@ is minimized.
 For any chosen facility set $S$, each client is assigned to its nearest open facility. The objective is therefore to minimize the total distance summed over all clients. When the metric is Euclidean, as in the experiments of this project, the triangle inequality is automatically satisfied, so the generated instances are valid metric instances.
 
 \subsection{Why the Problem is Difficult}
-The challenge comes from the combinatorial number of possible subsets $S$. Even when facility and client sets are modest in size, the number of candidate solutions grows quickly as $\binom{|F|}{k}$. Exhaustive search becomes impractical, so exact optimization is expensive for larger instances. This motivates the use of approximation algorithms and heuristics that provide strong solutions at much lower computational cost.
+The challenge comes from the combinatorial number of possible subsets $S$. Even when facility and client sets are modest in size, the number of candidate solutions grows quickly as $\binom{|F|}{k}$. Exhaustive search becomes impractical, so exact optimization is expensive for larger instances. This motivates the use of approximation-oriented methods and heuristics that provide strong solutions at much lower computational cost.
 
 \section{Algorithms}
 \subsection{Naive Greedy Baseline}
@@ -146,11 +146,11 @@ Output:
 The implementation stores a full facility-to-client distance matrix. This makes repeated objective evaluation straightforward. For local search, the code also keeps track of each client's closest and second-closest open facility distances so that candidate swaps can be evaluated faster than recomputing every assignment from scratch for every move. This optimization matters because the number of possible swaps in a single pass is $k(|F|-k)$.
 
 \section{Complexity Discussion}
-Let $m = |F|$ and $n = |C|$. In the greedy baseline, each of the $k$ selection rounds evaluates up to $m$ candidate additions, and each candidate addition scans all clients. In the present implementation, the worst-case time is roughly $O(kmn)$.
+Let $m = |F|$ and $n = |C|$. In the greedy baseline, each of the $k$ selection rounds evaluates up to $m$ candidate additions, and each candidate addition scans all clients. In the present implementation, the worst-case time is $O(kmn)$.
 
-For local search, each pass considers $k(m-k)$ candidate swaps. Each candidate swap may inspect all $n$ clients, although the implementation includes early stopping when a partial cost already exceeds the current best known swap cost. The per-pass worst-case complexity is therefore about $O(k(m-k)n)$. If the algorithm converges after $T$ passes, the total local-search effort is about $O(Tk(m-k)n)$.
+For local search, each pass considers $k(m-k)$ candidate swaps. Each candidate swap may inspect all $n$ clients, although the implementation includes early stopping when a partial cost already exceeds the current best known swap cost. The per-pass worst-case complexity is therefore $O(k(m-k)n)$. If the algorithm converges after $T$ passes, the total local-search effort is $O(Tk(m-k)n)$.
 
-This complexity explains the empirical trend seen in the runtime plots: local search is more expensive than the greedy baseline, but the number of improving passes remains fairly small for the tested instances, which keeps the overall runtime manageable.
+These are worst-case upper bounds. The nearest-facility bookkeeping and early stopping used in the implementation improve constant factors and practical running time on many instances, but they do not change the asymptotic worst-case bounds stated above. This complexity discussion explains the empirical trend seen in the runtime plots: local search is more expensive than the greedy baseline, but the number of improving passes remains fairly small for the tested instances, which keeps the overall runtime manageable.
 
 \section{Experimental Methodology}
 \subsection{Instance Generation}
@@ -181,7 +181,7 @@ The experiment runner records:
 \end{itemize}
 
 \subsection{Validation of Correctness}
-The generated results were checked directly after the experiments completed. In all 25 trials, local search produced a cost that was less than or equal to the greedy baseline cost. There were no violations of the expected monotonicity property. More specifically:
+The generated results were checked directly after the experiments completed. In all 25 trials, local search produced a cost that was less than or equal to the greedy baseline cost. No trial contradicted the monotonic improvement property of the implementation, since only cost-improving swaps were accepted. More specifically:
 \begin{itemize}
     \item local search was strictly better in 22 out of 25 trials,
     \item local search tied the greedy baseline in 3 out of 25 trials,
@@ -261,7 +261,7 @@ At size 40, the average improvement rose to 6.53\%, which is the largest average
 
 At size 60, the average improvement dropped to 2.24\%. This is still a real and consistent gain, but it shows that the benefit of local search can vary by instance family. Approximation heuristics should be evaluated empirically rather than judged only from a small number of examples.
 
-At sizes 80 and 100, the average gains returned to around 4\%. The runtime grew noticeably, especially at size 100 where the average total runtime reached about 0.5262 seconds. Even so, the absolute runtime remained small enough for experimental use on these moderate-scale instances.
+At sizes 80 and 100, the average gains returned to around 4\%. The runtime grew noticeably, especially at size 100 where the average total runtime reached about 0.6203 seconds. Even so, the absolute runtime remained small enough for experimental use on these moderate-scale instances.
 
 \subsection{Convergence Analysis}
 The convergence statistics provide additional insight into the local-search process. The average number of passes until convergence was:
@@ -273,7 +273,7 @@ The convergence statistics provide additional insight into the local-search proc
     \item 8.00 for size 100.
 \end{itemize}
 
-The recorded pass count includes the final pass in which the algorithm scans the neighborhood and confirms that no improving swap remains. Therefore, the number of improving swaps is usually one less than the number of passes, except in tie cases or when multiple improvements occur before the final termination pass.
+The recorded pass count includes the final pass in which the algorithm scans the neighborhood and confirms that no improving swap remains. Because one improving swap is applied per improving pass and the final pass is non-improving, the number of improving swaps equals the number of passes minus one in the reported experiments.
 
 The number of evaluated swaps also matches the expected scaling behavior. For instance, when the instance size is 100 with $k=20$, each pass contains $20 \times 80 = 1600$ possible swaps. Since the average number of passes is 8.00, the average number of evaluated swaps is exactly 12800, which matches the recorded data. This consistency is a useful sanity check for the implementation.
 
@@ -333,7 +333,7 @@ Several natural extensions could be explored in future work:
 \end{itemize}
 
 \section{Conclusion}
-The local-search approximation offers a practical and conceptually simple method for metric $k$-median. Relative to the naive greedy baseline, it generally delivers lower assignment cost while maintaining manageable running time for moderate instance sizes. This makes it a strong approximation-oriented heuristic when exact optimization is too expensive.
+The local-search heuristic offers a practical and conceptually simple method for metric $k$-median. Relative to the naive greedy baseline, it generally delivers lower assignment cost while maintaining manageable running time for moderate instance sizes. This makes it a strong approximation-oriented heuristic when exact optimization is too expensive.
 
 The experimental evidence from this project supports that conclusion clearly. The greedy baseline is useful as a fast initializer, but the local-search phase improves it in the large majority of cases and never degrades it on the tested benchmark set. As a result, the combined greedy-plus-local-search approach is a strong final recommendation for this implementation-focused study of metric $k$-median.
 
